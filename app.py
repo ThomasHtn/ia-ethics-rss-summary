@@ -1,31 +1,20 @@
 from flask import Flask, render_template
 import feedparser
-from transformers import pipeline
+from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
 
 # Config
 RSS_FEED_URL = "https://www.google.com/alerts/feeds/01533024866642448805/459010232931657264"
-keywords = [
+KEYWORDS = [
     "éthique de l'intelligence artificielle",
     "éthique de l'IA",
     "IA responsable",
-    "biais algorithmiques",
-    "transparence des algorithmes",
     "régulation de l'IA",
-    "gouvernance de l'intelligence artificielle",
-    "dérives de l'intelligence artificielle",
-    "justice algorithmique",
-    "surveillance algorithmique",
-    "discrimination algorithmique",
     "IA et vie privée",
     "encadrement de l'IA",
     "droits humains et intelligence artificielle",
     "AI ethics",
     "ethical AI",
     "responsible AI",
-    "algorithmic bias",
-    "AI transparency",
-    "AI governance",
-    "AI accountability",
     "regulation of AI",
     "AI and human rights",
     "ethical implications of AI",
@@ -35,10 +24,28 @@ keywords = [
     "ethics in artificial intelligence"
 ]
 
-MAX_ARTICLES = 20
+MAX_ARTICLES = 50
+MAX_TEXT_LENGTH = 512  # max tokens to avoid memory error
 
 app = Flask(__name__)
-summarizer = pipeline("summarization")
+
+# Résumeur (en français)
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn", tokenizer="facebook/bart-large-cnn", device=-1)
+
+# Traducteur NLLB - version allégée
+translator_model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M")
+translator_tokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M")
+
+def translate_to_french(text):
+    inputs = translator_tokenizer(
+        text[:MAX_TEXT_LENGTH], return_tensors="pt", truncation=True, max_length=MAX_TEXT_LENGTH
+    )
+    outputs = translator_model.generate(
+        **inputs,
+        forced_bos_token_id=translator_tokenizer.lang_code_to_id["fra_Latn"],
+        max_length=MAX_TEXT_LENGTH
+    )
+    return translator_tokenizer.decode(outputs[0], skip_special_tokens=True)
 
 def get_filtered_articles():
     feed = feedparser.parse(RSS_FEED_URL)
@@ -47,9 +54,13 @@ def get_filtered_articles():
     for entry in feed.entries:
         if any(kw.lower() in entry.title.lower() or kw.lower() in entry.summary.lower() for kw in KEYWORDS):
             try:
-                summary = summarizer(entry.summary, max_length=100, min_length=30, do_sample=False)[0]['summary_text']
-            except Exception:
-                summary = entry.summary[:300] + '...'
+                # Traduire vers FR
+                translated = translate_to_french(entry.summary)
+                # Résumer
+                summary = summarizer(translated, max_length=150, min_length=40, do_sample=False)[0]['summary_text']
+            except Exception as e:
+                print(f"[Erreur] {e}")
+                summary = f"[Erreur de résumé] {entry.summary[:300]}..."
             articles.append({
                 'title': entry.title,
                 'link': entry.link,
