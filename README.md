@@ -32,6 +32,20 @@ source .venv/bin/activate
 * Install dependencies : `pip install -r requirements.txt`
 * Alternatively, you can install the libraries yourself by reading requierements.txt file
 
+## Structure : 
+```bash
+.
+├── app.py
+├── articles_summary.md
+├── Procfile
+├── README.md
+├── requirements.txt
+├── static
+│   └── style.css
+└── templates
+    └── articles.html
+```
+
 ## Start APP
 ```bash
 python3 app.py

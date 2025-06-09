@@ -1,4 +1,5 @@
-/mlruns
+articles_summary.md
+
 /.venv
 
 /.pytest_cache
