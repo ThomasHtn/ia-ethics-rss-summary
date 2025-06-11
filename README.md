@@ -1,6 +1,6 @@
 # Description
 this project aims at filtering and translating the best results of a google alert concerning the topic “ia ethics”.
-
+To learn more about the ethics of ia, I invite you to read this [document](./research_and_development.md)
 # Setup
 
 ## Virtual environment

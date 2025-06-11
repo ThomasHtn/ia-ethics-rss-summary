@@ -1,5 +1,24 @@
 
-# Éthique et Intelligence Artificielle : Bonnes et Mauvaises Pratiques
+# Éthique et Intelligence Artificielle 
+
+## Qu’est-ce que l’éthique de l’IA ?
+
+L’éthique est un ensemble de principes moraux qui nous aident à distinguer le bien du mal. L’éthique de l’IA est un domaine pluridisciplinaire qui étudie comment optimiser l’impact bénéfique de l’intelligence artificielle (IA) tout en réduisant ses risques et ses effets indésirables.
+
+## Les principes de l’éthique IA
+
+**Respect des personnes :** ce principe reconnaît l’autonomie des individus et permet aux chercheurs de protéger les personnes dont l’autonomie est réduite, ce qui peut être dû à diverses circonstances telles que la maladie, un handicap mental, des restrictions d’âge. Ce principe touche principalement l’idée de consentement. Les personnes doivent être conscientes des risques et des avantages potentiels de toute expérience à laquelle elles participent, et elles doivent pouvoir choisir de participer ou de s’en retirer à tout moment avant et pendant l’expérience.
+
+**Bienveillance :** ce principe sort du cadre de l’éthique des soins de santé, où les médecins prêtent serment de « ne pas nuire ». Cette idée peut être facilement appliquée à l’intelligence artificielle, où les algorithmes peuvent amplifier les préjugés liés à la race, au genre, aux opinions politiques, etc., malgré l’intention de faire le bien et d’améliorer un système donné.
+
+**Justice :** ce principe traite de questions telles que l’équité et l’égalité. Qui doit profiter des avantages de l’expérimentation et du machine learning ? Le rapport Belmont propose cinq façons de répartir les charges et les avantages :
+  - Partage équitable
+  - Besoin individuel
+  - Effort individuel
+  - Contribution sociétale
+  - Mérite
+
+[Source](https://www.ibm.com/fr-fr/think/topics/ai-ethics)
 
 ## ✅ Bonnes pratiques éthiques
 
@@ -80,3 +99,4 @@
 
 - **UNESCO** : recommandations centrées sur les droits humains  
 - **Toptal** : équité, transparence et responsabilité en design  
+- **IA ACT** : [La loi européenne sur l'intelligence artificielle](https://artificialintelligenceact.eu/fr/)
