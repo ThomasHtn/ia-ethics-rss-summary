@@ -100,3 +100,101 @@ L’éthique est un ensemble de principes moraux qui nous aident à distinguer l
 - **UNESCO** : recommandations centrées sur les droits humains  
 - **Toptal** : équité, transparence et responsabilité en design  
 - **IA ACT** : [La loi européenne sur l'intelligence artificielle](https://artificialintelligenceact.eu/fr/)
+
+# Types de Modèles en Intelligence Artificielle
+
+## 1. Classification
+
+La classification est une tâche supervisée où le modèle apprend à attribuer une étiquette ou une classe à chaque observation en fonction de ses caractéristiques.  
+Elle est utilisée lorsque la variable cible est **catégorielle** (ex : "chat" ou "chien", "spam" ou "non-spam").
+
+**Exemples :**
+- Reconnaissance d’images (chien, chat, voiture, etc.)
+- Détection de spam dans les e-mails
+- Diagnostic médical (malade / sain)
+
+---
+
+## 2. Régression
+
+La régression est une tâche supervisée où le modèle prédit une **valeur numérique continue** à partir des caractéristiques d’entrée.  
+Elle est utilisée lorsque la variable cible est **quantitative** (ex : prix, température, poids).
+
+**Exemples :**
+- Prédiction du prix de l’immobilier
+- Prévision de la demande énergétique
+- Estimation de la consommation d’essence
+
+---
+
+## 3. Clustering (Regroupement)
+
+Le clustering est une tâche **non supervisée** qui consiste à regrouper automatiquement les données en **clusters** (groupes) selon leur similarité.  
+Le modèle ne connaît pas les étiquettes à l’avance, il découvre des structures naturelles dans les données.
+
+**Exemples :**
+- Segmentation de clients selon leur comportement
+- Regroupement de documents similaires
+- Détection d’anomalies
+
+# Quel modèle chosir pour notre besoin  ?
+
+## Objectif
+Pour rappel, notre objectif est d'identifier automatiquement, parmi des articles RSS, ceux qui correspondent à la thématique  "éthique de l'IA". On aura donc une notion "binaire" -> l'article est-il pertinent ? oui / non
+
+## Classification supervisée (texte)
+D'après notre objectif et les définitions citées précédemment, le modèle optimal pour ce projet semble être la **Classification supervisée**. En effet, le but ici, va être d'attribuer une étiquette à nos articles
+- **Classe 1 :** articles pertinents sur l'éthique de l’IA
+- **Classe 0 :** articles non pertinents
+
+Nous avons donc pas besoin de prédire une valeur numérique. On oublie le modèle de **Régression**. Et nous n'avons pas besoin de regrouper les articles par thème car ils sont déjà filtrer par thématique en amont. On peut donc éliminer le **Clustering**.
+
+## Enregistrement des articles
+Afin d'entrainer notre futur modèle, nous allons avoir besoin d'enregistrer tous nos articles dans une base de données.
+
+| id   | source                | title      | Body
+| ---  | --------------------- | ---------- | -------------------------
+| 1    | http://mon-article.fr | Mon titre  | Le contenue de mon article
+
+Pour cela, il est possible de passer par une libraire [feedparser](https://pypi.org/project/feedparser/)
+
+exemple de code : 
+```python
+# Lecture du flux RSS
+rss_url = "https://example.com/rss"  # Remplace par l'URL de ton flux RSS
+feed = feedparser.parse(rss_url)
+
+# Lecture des articles pour récupérer la data à ajouter dans notre table
+for entry in feed.entries:
+    title = entry.get("title", "")
+    content = entry.get("summary", "")  # parfois "content[0].value"
+    url = entry.get("link", "")
+    published_at = entry.get("published", "")
+    source = feed.feed.get("title", "Unknown Source")  # titre du flux RSS
+```
+## Nettoyage des données
+Afin d'entrainer au mieux notre futur modèle, nous aurons besoin de filtrer et de nettoyer nos données.
+
+- Supprimer les articles qui n'ont pas de contenu
+- Supprimer les doublons
+- Supprime les articles très courts (len(content) < 100 caractères)
+- Uniquement en français 🤔 ?
+- Supprimer le html dans le contenue
+- Supprimer les liens dans le contenue
+- Conserver uniquement les lettres et les espaces dans le contenue
+
+**Résultat :**
+
+| titre               | contenu nettoyé          | pertinent |
+| ------------------- | ------------------------ | --------- |
+| L’éthique de l’IA   | ethique intelligence ... | 1         |
+| Nouveaux GPU Nvidia | nouveau gpu nvidia ...   | 0         |
+
+
+## Comment mesurer la pertinence d'un article
+
+**1. Recherche par mots clés** 
+L'idée est de constuire une liste de mots-clés (ex : "IA responsable", "biais algorithmiques", "transparence", etc.) et marquer l'article comme pertient si celui-ci contient ces mots dans le titre, le résumé ou le corps
+
+**2. Utiliser un modèle pré-entraîné pour comparer notre modèle**
+Il existe des modèles comme **facebook/bart-large-mnli** pour estimer directement la pertinence sans entraînement préalable. Il serait alors possible de comparer les performances de notre modèle.
