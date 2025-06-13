@@ -177,11 +177,11 @@ Afin d'entrainer au mieux notre futur modèle, nous aurons besoin de filtrer et 
 
 - Supprimer les articles qui n'ont pas de contenu
 - Supprimer les doublons
-- Supprime les articles très courts (len(content) < 100 caractères)
-- Uniquement en français 🤔 ?
-- Supprimer le html dans le contenue
-- Supprimer les liens dans le contenue
-- Conserver uniquement les lettres et les espaces dans le contenue
+- Supprimer les articles très courts (len(content) < 100 caractères)
+- Supprimer les articles non français 🤔 ?
+- Supprimer le html dans le contenu
+- Supprimer les liens dans le contenu
+- Conserver uniquement les lettres et les espaces dans le contenu
 
 **Résultat :**
 
